@@ -1,4 +1,11 @@
 #!/usr/bin/python2
+"""
+This script will scan the given directories for mp3 albums
+and if any of the mp3 files in the folder needs replaygain info
+it will give you a mp3gain command to add that info.
+
+Author: Rene Peinthor
+"""
 
 from mutagen.mp3 import MP3
 import os
@@ -21,18 +28,18 @@ def subdirs(path):
             dirs.add(dirname)
     return dirs
 
-def main(startdir):
-    #startdir="/home/rp/Music/"
-    sdirs = subdirs(os.path.abspath(startdir))
-    for dir in sdirs:
-        if not hasrpgain(dir):
-            print('mp3gain -s i -a "{dirname}"*.mp3'.format(dirname=dir))
+def main(startdirs):
+    for startdir in startdirs:
+        sdirs = subdirs(os.path.abspath(startdir))
+        for dir in sdirs:
+            if not hasrpgain(dir):
+                print('mp3gain -s i -a "{dirname}"*.mp3'.format(dirname=dir))
 
 def help():
-    print("missusage")
+    print("rgainchecker folders...")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        main(sys.argv[1])
+        main(sys.argv[1:])
     else:
         help()
