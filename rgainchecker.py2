@@ -1,0 +1,38 @@
+#!/bin/python2
+
+from mutagen.mp3 import MP3
+import os
+import sys
+
+def hasrpgain(dir):
+    for file in os.listdir(dir):
+        if file.endswith(".mp3"):
+            mp3info = MP3(os.path.join( dir, file))
+            if not mp3info.get("TXXX:MP3GAIN_ALBUM_MINMAX"):
+                #print(file)
+                return False
+    return True
+
+def subdirs(path):
+    dirs = set()
+    for root,  directories,  files in os.walk(path):
+        for file in files:
+            dirname = os.path.join(root, os.path.dirname(file))
+            dirs.add(dirname)
+    return dirs
+
+def main(startdir):
+    #startdir="/home/rp/Music/"
+    sdirs = subdirs(os.path.abspath(startdir))
+    for dir in sdirs:
+        if not hasrpgain(dir):
+            print('mp3gain -s i -a "{dirname}"*.mp3'.format(dirname=dir))
+
+def help():
+    print("missusage")
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        main(sys.argv[1])
+    else:
+        help()
